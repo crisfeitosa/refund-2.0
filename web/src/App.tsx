@@ -1,5 +1,5 @@
 export function App() {
   return (
-    <h1>Refund</h1>
+    <h1 className="text-3xl font-bold">Refund</h1>
   )
 }
