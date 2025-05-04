@@ -6,6 +6,8 @@ import { Select } from "../components/Select";
 import { Upload } from "../components/Upload";
 import { Button } from "../components/Button";
 
+import fileSvg from "../assets/file.svg";
+
 import { CATEGORIES, CATEGORIES_KEYS } from "../utils/categories";
 
 export function Refund() {
@@ -14,6 +16,7 @@ export function Refund() {
   const [category, setCategory] = useState("");
   const [isloading, setIsLoading] = useState(false);
   const [fileName, setFileName] = useState<File | null>(null);
+  const [fileURL, setFileURL] = useState<string | null>(null);
   
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
@@ -86,10 +89,22 @@ export function Refund() {
         />
       </div>
 
-      <Upload
-        filename={fileName && fileName.name}
-        onChange={(e) => e.target.files && setFileName(e.target.files[0])}
-      />
+      
+      {params.id && fileURL ? (
+        <a
+          href={`https://refundapi.onrender.com/uploads/${fileURL}`}
+          target="_blank"
+          className="text-sm text-green-100 font-semibold flex items-center justify-center gap-2 my-6 hover:opacity-70 transition ease-linear"
+        >
+          <img src={fileSvg} alt="Ícone do arquivo" />
+          Abrir comprovante
+        </a>
+      ) : (
+        <Upload
+          filename={fileName && fileName.name}
+          onChange={(e) => e.target.files && setFileName(e.target.files[0])}
+        />
+      )}
 
       <Button type="submit" isLoading={isloading}>
         {params.id ? "Voltar" : "Enviar"}
