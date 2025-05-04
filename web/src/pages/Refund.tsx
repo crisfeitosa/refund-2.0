@@ -9,16 +9,25 @@ import { Button } from "../components/Button";
 import { CATEGORIES, CATEGORIES_KEYS } from "../utils/categories";
 
 export function Refund() {
-  const navigate = useNavigate();
-
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
   const [isloading, setIsLoading] = useState(false);
   const [fileName, setFileName] = useState<File | null>(null);
+  
+  const navigate = useNavigate();
+  const params = useParams<{ id: string }>();
+
+  if (!params) {
+    setIsLoading(true);
+  }
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (params.id) {
+      return navigate(-1);
+    }
 
     navigate("/confirm", { state: { fromSubmit: true } });
 
@@ -50,6 +59,7 @@ export function Refund() {
         legend="Nome da solicitação"
         value={name}
         onChange={(e) => setName(e.target.value)}
+        disabled={!!params.id}
       />
 
       <div className="flex gap-4">
@@ -58,6 +68,7 @@ export function Refund() {
           legend="Categoria"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
+          disabled={!!params.id}
         >
           {CATEGORIES_KEYS.map((category) => (
             <option key={category} value={category}>
@@ -71,6 +82,7 @@ export function Refund() {
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           required
+          disabled={!!params.id}
         />
       </div>
 
@@ -80,7 +92,7 @@ export function Refund() {
       />
 
       <Button type="submit" isLoading={isloading}>
-        Enviar
+        {params.id ? "Voltar" : "Enviar"}
       </Button>
     </form>
   )
