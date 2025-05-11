@@ -9,7 +9,7 @@ import { useState } from "react";
 
 const session = {
   user: {
-    role: "employee"
+    role: ""
   }
 }
 
