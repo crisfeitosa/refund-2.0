@@ -1,19 +1,42 @@
 import { useActionState } from "react";
+import { AxiosError } from "axios";
+import { z, ZodError } from "zod";
 
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
+import { api } from "../services/api";
+
+const signInSchema = z.object({
+  email: z.string().email("E-mail inválido"),
+  password: z.string().trim().min(6, "Informe a senha"),
+});
 
 export function SignIn() {
-  const [state, formAction, isLoading] = useActionState(signIn, {
-    email: "",
-    password: "",
-  });
+  const [state, formAction, isLoading] = useActionState(signIn, null);
  
-  function signIn(prevState: any, formData: FormData) {
-    const email = formData.get("email");
-    const password = formData.get("password");
+  async function signIn(_: any, formData: FormData) {
+    try {
+      const data = signInSchema.parse({
+        email: formData.get("email"),
+        password: formData.get("password"),
+      });
+    } catch (error) {
+      console.log("error:", error);
 
-    return { email, password };
+      if (error instanceof ZodError) {
+        return { message: error.issues[0].message };
+      }
+
+      if (error instanceof AxiosError) {
+        return {
+          message:
+            error.response?.data.message ||
+            "Erro ao fazer login, tente novamente mais tarde.",
+        };
+      }
+
+      return { message: "Erro ao fazer login, tente novamente mais tarde." };
+    }
   }
 
   return (
@@ -24,7 +47,6 @@ export function SignIn() {
         legend="E-mail"
         type="email"
         placeholder="seu@email.com"
-        defaultValue={String(state.email)}
       />
 
       <Input
@@ -33,8 +55,11 @@ export function SignIn() {
         legend="Senha"
         type="password"
         placeholder="123456"
-        defaultValue={String(state.password)}
       />
+
+      <p className="text-red-500 text-sm text-center my-4 font-medium">
+        {state?.message}
+      </p>
 
       <Button type="submit" isLoading={isLoading}>
         Entrar
