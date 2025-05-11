@@ -2,9 +2,10 @@ import { useActionState } from "react";
 import { AxiosError } from "axios";
 import { z, ZodError } from "zod";
 
+import { api } from "../services/api";
+
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
-import { api } from "../services/api";
 
 const signInSchema = z.object({
   email: z.string().email("E-mail inválido"),
@@ -20,6 +21,8 @@ export function SignIn() {
         email: formData.get("email"),
         password: formData.get("password"),
       });
+
+      const response = await api.post("/sessions", data);
     } catch (error) {
       console.log("error:", error);
 
