@@ -9,16 +9,8 @@ import { ManagerRoutes } from "./ManagerRoutes";
 
 import { Loading } from "../components/Loading";
 
-const session = {
-  user: {
-    role: ""
-  }
-}
-
 export function Routes() {
-  const context = useAuth();
-
-  console.log("context:", context);
+  const { session } = useAuth();
 
   const [isLoading] = useState(false);
 
