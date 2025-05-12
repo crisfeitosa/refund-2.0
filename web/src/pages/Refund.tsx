@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
+import { z, ZodError } from "zod";
 
 import { Input } from "../components/Input";
 import { Select } from "../components/Select";
@@ -9,6 +10,14 @@ import { Button } from "../components/Button";
 import fileSvg from "../assets/file.svg";
 
 import { CATEGORIES, CATEGORIES_KEYS } from "../utils/categories";
+
+const refundSchema = z.object({
+  name: z.string().min(2, "Informe um nome claro para sua solicitação"),
+  category: z.string().min(1, { message: "Selecione uma categoria" }),
+  amount: z.coerce
+    .number({ message: "Informe um valor válido" })
+    .positive("Informe um valor válido"),
+});
 
 export function Refund() {
   const [name, setName] = useState("");
@@ -25,21 +34,34 @@ export function Refund() {
     setIsLoading(true);
   }
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (params.id) {
       return navigate(-1);
     }
 
-    navigate("/confirm", { state: { fromSubmit: true } });
+    try {
+      setIsLoading(true)
 
-    console.log({
-      name,
-      amount,
-      category,
-      fileName,
-    });
+      const data = refundSchema.parse({
+        name,
+        category,
+        amount: amount.replace(",", "."),
+      })
+
+      navigate("/confirm", { state: { fromSubmit: true } });
+    } catch (error) {
+      console.log(error);
+
+      if(error instanceof ZodError) {
+        return alert(error.issues[0].message)
+      }
+
+      alert("Ocorreu um erro inesperado, tente novamente mais tarde");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
