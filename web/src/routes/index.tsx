@@ -1,11 +1,13 @@
+import { useState } from "react";
 import { BrowserRouter } from "react-router";
+
+import { useAuth } from "../hooks/useAuth";
 
 import { AuthRoutes } from "./AuthRoutes";
 import { EmployeeRoutes } from "./EmployeeRoutes";
 import { ManagerRoutes } from "./ManagerRoutes";
 
 import { Loading } from "../components/Loading";
-import { useState } from "react";
 
 const session = {
   user: {
@@ -14,6 +16,10 @@ const session = {
 }
 
 export function Routes() {
+  const context = useAuth();
+
+  console.log("context:", context);
+
   const [isLoading] = useState(false);
 
   function Route() {
