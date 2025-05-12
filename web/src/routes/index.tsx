@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { BrowserRouter } from "react-router";
 
 import { useAuth } from "../hooks/useAuth";
@@ -10,9 +9,7 @@ import { ManagerRoutes } from "./ManagerRoutes";
 import { Loading } from "../components/Loading";
 
 export function Routes() {
-  const { session } = useAuth();
-
-  const [isLoading] = useState(false);
+  const { session, isLoading } = useAuth();
 
   function Route() {
     switch (session?.user.role) {
