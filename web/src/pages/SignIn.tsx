@@ -2,6 +2,7 @@ import { useActionState } from "react";
 import { AxiosError } from "axios";
 import { z, ZodError } from "zod";
 
+import { useAuth } from "../hooks/useAuth";
 import { api } from "../services/api";
 
 import { Button } from "../components/Button";
@@ -13,8 +14,10 @@ const signInSchema = z.object({
 });
 
 export function SignIn() {
+  const auth = useAuth();
+
   const [state, formAction, isLoading] = useActionState(signIn, null);
- 
+
   async function signIn(_: any, formData: FormData) {
     try {
       const data = signInSchema.parse({
@@ -23,6 +26,7 @@ export function SignIn() {
       });
 
       const response = await api.post("/sessions", data);
+      auth.save(response.data);
     } catch (error) {
       console.log("error:", error);
 
