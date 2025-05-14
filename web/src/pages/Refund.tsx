@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { z, ZodError } from "zod";
+import { AxiosError } from "axios";
+
+import { api } from "../services/api";
 
 import { Input } from "../components/Input";
 import { Select } from "../components/Select";
@@ -48,14 +51,22 @@ export function Refund() {
         name,
         category,
         amount: amount.replace(",", "."),
-      })
+      });
+
+      await api.post("/refunds", {
+        ...data, filename: "4665657564556576767676576765"
+      });
 
       navigate("/confirm", { state: { fromSubmit: true } });
     } catch (error) {
       console.log(error);
 
       if(error instanceof ZodError) {
-        return alert(error.issues[0].message)
+        return alert(error.issues[0].message);
+      }
+
+      if(error instanceof AxiosError) {
+        return alert(error.response?.data.message) ;
       }
 
       alert("Ocorreu um erro inesperado, tente novamente mais tarde");
