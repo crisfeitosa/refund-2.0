@@ -40,6 +40,8 @@ export function AuthProvider({ children }: { children: ReactNode } ) {
     const token = localStorage.getItem(`${LOCAL_STORAGE_KEY}:token`);
 
     if(user && token) {
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
       setSession({
         token,
         user: JSON.parse(user),
